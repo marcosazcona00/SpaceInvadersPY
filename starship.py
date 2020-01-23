@@ -10,6 +10,12 @@ class Enemy:
         self.__xPosition = randint(0,600)
         self.__image = pygame.image.load('enemigo.png')
     
+    def x_position(self):
+        return self.__xPosition
+
+    def y_position(self):
+        return self.__yPosition
+
     def draw(self,screen):
         """
             Este método dibuja al enemigo
@@ -31,7 +37,11 @@ class Enemy:
         return self.__yPosition >= yStarshipPosition and self.__yPosition <= yStarshipPosition + 40
 
     def exceded(self):
+        """
+            Este método retorna True el enemigo llegó al limite inferior de la pantalla
+        """
         return self.__yPosition > 600
+
 class Ball:
     def __init__(self,xStarshipPosition,ballIndex):
         #Recibo xStarshipPosition (posicion de la nave) porque desde el X de la nave disparo la bala
@@ -44,6 +54,7 @@ class Ball:
         """
             Este método dibuja la bala en pantalla
         """
+        print('Bala X {} Y {} '.format(self.__xPosition,self.__yPosition))
         screen.blit(self.__image,(self.__xPosition,self.__yPosition)) #Cambia de posicion la bala
         self.__yPosition -= 10 #Lo mueve 10 pixeles para atras
 
@@ -52,6 +63,19 @@ class Ball:
             Retorna true si la bala se pasó del límite superior de la pantalla. False si no se pasó
         """
         return self.__yPosition < 0
+
+    def collideX(self,xEnemyPosition):
+        """
+            Retorna True si la bala colisiona con el enemigo sobre el eje X
+        """
+        return xEnemyPosition >= self.__xPosition - 30 and xEnemyPosition <= self.__xPosition
+
+    def collideY(self,yEnemyPosition):
+        """
+            Retorna True si la bala colisiona con el enemigo sobre el eje X
+        """
+        return self.__yPosition >= yEnemyPosition and self.__yPosition <= yEnemyPosition + 40
+
 
 class Starship:
     def __init__(self,width,height):
@@ -119,7 +143,6 @@ def main():
                 pygame.quit()
                 break
             elif captured_event is not None and captured_event.type == pygame.KEYDOWN:
-                print(i)
                 #pygame.KEYDOWN si presionó una tecla del teclado
                 if captured_event.key == pygame.K_LEFT:
                     starship.move_left()
@@ -133,13 +156,20 @@ def main():
 
             #----- Carga las balas en pantalla ------#
             for munition in used_munitions:
-                munition.shoot(screen)
+                munition.shoot(screen) #Dibujo la animación de disparo de cada bala que haya sido disparada
             #----------------------------------------#
-
+            print('Enemigo X {} Y {}'.format(enemy.x_position(),enemy.y_position()))
             #------ Verifica si cada bala se paso del limite de la pantalla y la saca de la lista ----------#
             for munition in used_munitions:
                 if munition.exceded():
-                    used_munitions.pop(0)
+                    used_munitions.pop(0) #Saco la primer bala que llegó al límite de la lista
+                else:
+                    #Si la munición no excedió, sigue moviendose
+                    if munition.collideY(enemy.y_position()) and munition.collideX(enemy.x_position()):
+                        print('Colision!')
+                        used_munitions.pop(0) #Saco la primer bala porque ya impactó
+                        enemy = Enemy() #Creo al nuevo enemigo porque lo tocó
+                    
 
             #----------------------------------------_#
             
