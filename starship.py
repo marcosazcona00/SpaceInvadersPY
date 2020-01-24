@@ -10,7 +10,7 @@ class Enemy:
     def __init__(self):
         #El enemigo es de 20x20
         self.__yPosition = -20
-        self.__xPosition = randint(10,500)
+        self.__xPosition = randint(10,500) #Es un random entre 10 y 500 sobre el eje X donde se genera el enemigo
         self.__image = pygame.image.load('enemigo.png')
     
     def x_position(self):
@@ -23,8 +23,8 @@ class Enemy:
         """
             Este método dibuja al enemigo
         """
-        screen.blit(self.__image,(self.__xPosition,self.__yPosition))       
-        self.__yPosition += 10
+        screen.blit(self.__image,(self.__xPosition,self.__yPosition)) #Dibuja al enemigo en pantalla
+        self.__yPosition += 10 #Con esto se hace la animación del enemigo cayendo
         sleep(0.001)
 
     def collideX(self,xStarshipPosition):
