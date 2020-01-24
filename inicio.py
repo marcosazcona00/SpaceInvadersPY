@@ -53,6 +53,7 @@ def main():
             pass
 
     if arrow_up is not None and arrow_up:
-        starship.main()
+        #Si está posicionado en "START basicamente"
+        starship.main() #Ejecuto el main del Starship
 if __name__ == '__main__':
     main()
