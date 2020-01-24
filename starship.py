@@ -81,8 +81,6 @@ class Ball:
 
 class Starship:
     def __init__(self,width,height):
-        self.__munition = list() #Lista de municiones
-        self.__ballIndex = 0 #Indice para moverme en la lista de balas
         self.__xPosition = width // 2 - 50
         self.__yPosition = height - 100 
         self.__image = pygame.image.load('nave2.png')
