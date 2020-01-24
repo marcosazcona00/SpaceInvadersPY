@@ -46,9 +46,8 @@ class Enemy:
         return self.__yPosition > 600
 
 class Ball:
-    def __init__(self,xStarshipPosition,ballIndex):
+    def __init__(self,xStarshipPosition):
         #Recibo xStarshipPosition (posicion de la nave) porque desde el X de la nave disparo la bala
-        self.__ballIndex = ballIndex #Se usa para distinguir qué numero de bala es
         self.__yPosition = 600 - 100
         self.__xPosition = xStarshipPosition
         self.__image = pygame.image.load('bala.jpeg')
@@ -109,7 +108,7 @@ class Starship:
         """
             Devuelve el objeto bala que se va a disparar
         """
-        return Ball(self.__xPosition, self.__ballIndex)
+        return Ball(self.__xPosition)
 
 def draw_enemys(enemys,screen):
     """
