@@ -3,11 +3,14 @@ import threading
 from time import sleep
 from random import randint
 
+i = 0
+
+
 class Enemy:
     def __init__(self):
         #El enemigo es de 20x20
         self.__yPosition = -20
-        self.__xPosition = randint(0,600)
+        self.__xPosition = randint(10,500)
         self.__image = pygame.image.load('enemigo.png')
     
     def x_position(self):
@@ -114,26 +117,45 @@ class Starship:
         return self.__munition[self.__ballIndex - 1] #Como incremente, si la primera vez que creo la bala ballIndex es 0,ahora es 1 y cuando pida en la lista ese elemento no va a estar porque solo va a estar ocupada la posicion 0
 
 
+def draw_enemys(enemys,screen):
+    """
+        Este módulo dibuja los enemigos en pantalla
+    """
+    for enemy in enemys:
+        enemy.draw(screen)
+
+def create_enemy(enemys,i):
+    """
+        Este módulo crea un enemigo cada vez que i llega a 120
+    """
+    if i == 120:
+        enemys.append(Enemy())
+        i = 0
+    else:
+        i+=1
+    return i
 
 def main():
-
+    fin = False
     pygame.init()
     screen_width = 600
     screen_height = 600
     captured_event = None
+    enemys = list() #Lista de enemigos
     used_munitions = list() #Lista de municiones
     background_color = (82,86,85)
-    #enemys = [Enemy() for x in range(0,10)]
     starship = Starship(screen_width,screen_height)
     screen = pygame.display.set_mode((screen_width,screen_height))
 
     screen.fill(background_color)
 
-    i = 0
+    enemys.append(Enemy()) #Agrego un enemigo
 
-    enemy = Enemy() #Creo un enemigo
+    i = 0 #Este indice se usa para que, cada vez que llegue a 200, agregue un enemigo a la lista de enemys
 
-    while True:
+    while not fin:
+
+        i = create_enemy(enemys,i)
 
         try:
 
@@ -158,34 +180,40 @@ def main():
             for munition in used_munitions:
                 munition.shoot(screen) #Dibujo la animación de disparo de cada bala que haya sido disparada
             #----------------------------------------#
-            print('Enemigo X {} Y {}'.format(enemy.x_position(),enemy.y_position()))
-            #------ Verifica si cada bala se paso del limite de la pantalla y la saca de la lista ----------#
-            for munition in used_munitions:
-                if munition.exceded():
-                    used_munitions.pop(0) #Saco la primer bala que llegó al límite de la lista
-                else:
-                    #Si la munición no excedió, sigue moviendose
-                    if munition.collideY(enemy.y_position()) and munition.collideX(enemy.x_position()):
-                        print('Colision!')
-                        used_munitions.pop(0) #Saco la primer bala porque ya impactó
-                        enemy = Enemy() #Creo al nuevo enemigo porque lo tocó
-                    
+            
+            #------ Verifica si cada bala se excede de la pantalla (y la saca) o si no excedió, si cada bala choca con alguno de los enemigos en pantalla ----------#
 
+            for enemy in range(0,len(enemys)):
+                for munition in used_munitions:
+                    if munition.exceded():
+                        used_munitions.pop(0) #Se excedió de la pantalla
+                    else: #Si no excedió
+                        #Si la bala colisiona en X e Y con el enemigo
+                        if munition.collideY(enemys[enemy].y_position()) and munition.collideX(enemys[enemy].x_position()):
+                            print('Colision!')
+                            used_munitions.pop(0) #Saco la primer bala porque ya impactó
+                            enemys.pop(enemy) #Saco al enemigo de la lista
+                            enemys.append(Enemy()) #Agrego un nuevo enemigo               
             #----------------------------------------_#
             
-            colisionoX = enemy.collideX(starship.x_position())
-            colisionoY = enemy.collideY(starship.y_position())
-            
-            if enemy.exceded() and not colisionoX and not colisionoY:
-                #Si el enemigo se pasó de los limites de la pantalla y no colisiono
-                enemy = Enemy() #Creo un nuevo enemigo
-            elif colisionoX and colisionoY:
-                #Si colisiono
-                print('FIN DEL JUEGO')
-                break
-                
-            starship.draw(screen)
-            enemy.draw(screen)
+            # ------- Verifica para cada enemigo si colisiona con la nave ---------#
+
+            for enemy in range(0,len(enemys)):
+                colisionoX = enemys[enemy].collideX(starship.x_position())
+                colisionoY = enemys[enemy].collideY(starship.y_position())
+                #Si el enemigo en la posicion enemy de la lista se excedió y no colisionó
+                if enemys[enemy].exceded() and not colisionoX and not colisionoY:
+                    #Si el enemigo se pasó de los limites de la pantalla y no colisiono
+                    enemys.pop(enemy) #Saco al enemigo de la pantalla
+                    enemys.append(Enemy())
+                elif colisionoX and colisionoY:
+                    #Si colisiono
+                    fin = True
+                    break
+            # ----------------------------------------------------------------------- #
+
+            starship.draw(screen) #Dibuja la nave
+            draw_enemys(enemys,screen) #Dibuja los enemigos
             pygame.display.flip() #Actualizo los cambios hechos
             sleep(0.03)
             
