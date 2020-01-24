@@ -57,7 +57,6 @@ class Ball:
         """
             Este método dibuja la bala en pantalla
         """
-        print('Bala X {} Y {} '.format(self.__xPosition,self.__yPosition))
         screen.blit(self.__image,(self.__xPosition,self.__yPosition)) #Cambia de posicion la bala
         self.__yPosition -= 10 #Lo mueve 10 pixeles para atras
 
@@ -110,12 +109,9 @@ class Starship:
 
     def shoot(self,screen):
         """
-            Devuelve el objeto bala
+            Devuelve el objeto bala que se va a disparar
         """
-        self.__munition.append(Ball(self.__xPosition, self.__ballIndex)) #Creo la nueva bala
-        self.__ballIndex += 1 #Incremento el indice
-        return self.__munition[self.__ballIndex - 1] #Como incremente, si la primera vez que creo la bala ballIndex es 0,ahora es 1 y cuando pida en la lista ese elemento no va a estar porque solo va a estar ocupada la posicion 0
-
+        return Ball(self.__xPosition, self.__ballIndex)
 
 def draw_enemys(enemys,screen):
     """
@@ -147,7 +143,7 @@ def main():
     starship = Starship(screen_width,screen_height)
     screen = pygame.display.set_mode((screen_width,screen_height))
 
-    screen.fill(background_color)
+    screen.fill(background_color) #Pinto el fondo
 
     enemys.append(Enemy()) #Agrego un enemigo
 
@@ -208,6 +204,7 @@ def main():
                     enemys.append(Enemy())
                 elif colisionoX and colisionoY:
                     #Si colisiono
+                    print('Colisione ocn enemigo')
                     fin = True
                     break
             # ----------------------------------------------------------------------- #
