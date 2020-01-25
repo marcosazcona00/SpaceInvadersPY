@@ -118,7 +118,6 @@ def main():
         wantsContinue = True
         while wantsContinue:
             enemys_killed = starship.main() #Ejecuto el main del Starship
-            print('SALIR')
             wantsContinue = try_game_again(enemys_killed)
 if __name__ == '__main__':
     main()
