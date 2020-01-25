@@ -71,7 +71,6 @@ def main():
     arrow_up = True #Se va a usar para detectar si presióno o no la flecha para arriba para moverse por el emnu
     captured_event = None
     
-    rect = pygame.Rect(0,300,10,30) #Establezco el objeto rect
     
     font = pygame.font.SysFont('arial',60) #Establezco la fuente de la letra
     space_text = font.render("SPACE", True, [238,226,71], [0,0,0])     #render('Texto',True,[R,G,B colores de la letra],[R G B color fondo de letra])
@@ -81,7 +80,8 @@ def main():
     main_text = font_2.render("INICIAR", True, [238,226,71], [0,0,0])
     exit_text = font_2.render("SALIR", True, [238,226,71], [0,0,0])
 
-    background = pygame.image.load('inicio.jpeg')
+    rect = pygame.Rect(0,300,10,30) #DIbujo el rectangulo apuntado al Iniciar
+
     screen = pygame.display.set_mode((width,height))
 
     while True:
