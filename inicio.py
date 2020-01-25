@@ -1,6 +1,5 @@
 import pygame
 import starship
-import PySimpleGUI as sg
 
 def try_game_again(enemys_killed):
     """
