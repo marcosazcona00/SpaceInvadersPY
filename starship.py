@@ -1,10 +1,6 @@
 import pygame
-import threading
 from time import sleep
 from random import randint
-
-i = 0
-
 
 class Enemy:
     def __init__(self):
@@ -129,16 +125,30 @@ def create_enemy(enemys,i):
     return i
 
 def main():
-    fin = False
+    """
+        Retorna la cantidad de enemigos matados
+    """
     pygame.init()
+    pygame.font.init()
+
     screen_width = 600
     screen_height = 600
+
+    end_game = False
+    enemys_killed = 0
     captured_event = None
+    
     enemys = list() #Lista de enemigos
     used_munitions = list() #Lista de municiones
-    background_color = (82,86,85)
+    
     starship = Starship(screen_width,screen_height)
     screen = pygame.display.set_mode((screen_width,screen_height))
+
+    background_color = (82,86,85)
+
+    font_text = pygame.font.SysFont('arial',20)
+    score_text = font_text.render('Puntaje', True, [238,226,71], background_color)
+    enemys_killed_text = font_text.render(str(enemys_killed), True, [238,226,71], background_color)   
 
     screen.fill(background_color) #Pinto el fondo
 
@@ -146,9 +156,11 @@ def main():
 
     i = 0 #Este indice se usa para que, cada vez que llegue a 200, agregue un enemigo a la lista de enemys
 
-    while not fin:
+    while not end_game:
+        
+        screen.fill(background_color) #Pinto el fondo
 
-        i = create_enemy(enemys,i)
+        i = create_enemy(enemys,i) #Creo un enemigo si corresponde
 
         try:
 
@@ -167,7 +179,6 @@ def main():
                     captured_event = None #Si no pongo esto queda trabado el K_UP Y tira 2 balas en vez de una
                     used_munitions.append(starship.shoot(screen)) #Como toco la flecha para arriba para disparar, agrego a la lista de balas una nueva bala
             
-            screen.fill(background_color)
 
             #----- Carga las balas en pantalla ------#
             for munition in used_munitions:
@@ -186,8 +197,11 @@ def main():
                             print('Colision!')
                             used_munitions.pop(0) #Saco la primer bala porque ya impactó
                             enemys.pop(enemy) #Saco al enemigo de la lista
-                            enemys.append(Enemy()) #Agrego un nuevo enemigo               
-            #----------------------------------------_#
+                            enemys.append(Enemy()) #Agrego un nuevo enemigo 
+                            enemys_killed += 1 #Incremento la cantidad de enemigos asesinados
+                            enemys_killed_text = font_text.render(str(enemys_killed), True, [238,226,71], background_color)  #Renderizo con el nuevo texto  
+                                         
+            #---------------------------------------------------------------------------------------------------------------------#
             
             # ------- Verifica para cada enemigo si colisiona con la nave ---------#
 
@@ -201,11 +215,13 @@ def main():
                     enemys.append(Enemy())
                 elif colisionoX and colisionoY:
                     #Si colisiono
-                    print('Colisione ocn enemigo')
-                    fin = True
+                    end_game = True
+                    pygame.quit()
                     break
             # ----------------------------------------------------------------------- #
 
+            screen.blit(score_text,(0,0)) #Muestro y posiciono el texto "Puntaje"
+            screen.blit(enemys_killed_text,(80,0)) #Muestro y posiciono el texto con la cantidad de enemigos matados
             starship.draw(screen) #Dibuja la nave
             draw_enemys(enemys,screen) #Dibuja los enemigos
             pygame.display.flip() #Actualizo los cambios hechos
@@ -213,6 +229,8 @@ def main():
             
         except pygame.error:
             pass
+        
+    return enemys_killed
 
 if __name__ == '__main__':
     main()

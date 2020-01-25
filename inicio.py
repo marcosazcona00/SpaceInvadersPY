@@ -1,6 +1,59 @@
 import pygame
 import starship
+import PySimpleGUI as sg
 
+def try_game_again(enemys_killed):
+    """
+        Retorna si quiere o no continuar
+    """
+    pygame.init()
+    pygame.font.init()
+
+    captured_event = None
+
+    cursor_yes = True #El cursor inicialmente va a estar para presionar SI (para reintentar de vuelta)
+
+    screen = pygame.display.set_mode((300,300))
+
+    font_text = pygame.font.SysFont('arial',30)
+    no = font_text.render('NO',True,[238,226,71], [0,0,0] )
+    yes = font_text.render('SI',True,[238,226,71], [0,0,0] )
+    score_text = font_text.render('PUNTAJE',True,[238,226,71], [0,0,0] )
+    enemys_killed_text = font_text.render(str(enemys_killed),True, [238,226,71], [0,0,0])
+
+    rect = pygame.Rect(20,205,20,20)
+
+    while True:
+        screen.fill((0,0,0))
+      
+        try:
+            for event in pygame.event.get():
+                captured_event = event
+
+            if captured_event.type == 12:
+                pygame.quit()
+                break
+            elif captured_event.type == pygame.KEYDOWN:
+                if captured_event.key == pygame.K_LEFT and not cursor_yes:
+                    rect = pygame.Rect(20,205,20,20)
+                    cursor_yes = True
+                elif captured_event.key == pygame.K_RIGHT and cursor_yes:
+                    rect = pygame.Rect(150,205,20,20)
+                    cursor_yes = False
+                elif captured_event.key == pygame.K_SPACE:
+                    pygame.quit()
+                    break
+            pygame.draw.rect(screen,[136,136,136],rect)
+            screen.blit(score_text,(70,50))
+            screen.blit(enemys_killed_text,(120,100))
+            screen.blit(yes,(50,200))
+            screen.blit(no,(180,200))
+            pygame.display.flip()
+
+        except pygame.error:
+            pass    
+
+    return cursor_yes
 def main():
     pygame.init()
     pygame.font.init()
@@ -54,6 +107,10 @@ def main():
 
     if arrow_up is not None and arrow_up:
         #Si está posicionado en "START basicamente"
-        starship.main() #Ejecuto el main del Starship
+        wantsContinue = True
+        while wantsContinue:
+            enemys_killed = starship.main() #Ejecuto el main del Starship
+            print('SALIR')
+            wantsContinue = try_game_again(enemys_killed)
 if __name__ == '__main__':
     main()
