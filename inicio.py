@@ -21,7 +21,7 @@ def try_game_again(enemys_killed):
     score_text = font_text.render('PUNTAJE',True,[238,226,71], [0,0,0] )
     enemys_killed_text = font_text.render(str(enemys_killed),True, [238,226,71], [0,0,0])
 
-    rect = pygame.Rect(20,205,20,20)
+    rect = pygame.Rect(20,205,20,20) #Posiciono el rectangulo apuntando al SI
 
     while True:
         screen.fill((0,0,0))
@@ -31,30 +31,39 @@ def try_game_again(enemys_killed):
                 captured_event = event
 
             if captured_event.type == 12:
+                #Si toca la X para cerrar la pantalla
                 pygame.quit()
                 break
             elif captured_event.type == pygame.KEYDOWN:
                 if captured_event.key == pygame.K_LEFT and not cursor_yes:
-                    rect = pygame.Rect(20,205,20,20)
-                    cursor_yes = True
+                    rect = pygame.Rect(20,205,20,20) #Posiciono el rectangulo apuntando al SI
+                    cursor_yes = True #Ahora el cursor si apunta al SI
                 elif captured_event.key == pygame.K_RIGHT and cursor_yes:
-                    rect = pygame.Rect(150,205,20,20)
-                    cursor_yes = False
+                    rect = pygame.Rect(150,205,20,20) #Posiciono el rectangulo apuntando al NO
+                    cursor_yes = False #Ahora el cursor apunta al NO. 
                 elif captured_event.key == pygame.K_SPACE:
                     pygame.quit()
                     break
-            pygame.draw.rect(screen,[136,136,136],rect)
+
+            pygame.draw.rect(screen,[136,136,136],rect) #Dibujo el rectangulo
+            #----------------Dibujo los textos ---------------------- #
             screen.blit(score_text,(70,50))
             screen.blit(enemys_killed_text,(120,100))
             screen.blit(yes,(50,200))
             screen.blit(no,(180,200))
-            pygame.display.flip()
+            #-------------------------------------------------------- #
+            pygame.display.flip() #Actualizo los cambios
 
         except pygame.error:
             pass    
 
-    return cursor_yes
+    return cursor_yes #Retorno si eligió SI o NO. True si toco SI, False si tocó NO
+
+
 def main():
+    """
+        MAIN QUE MUESTRA EL PRIMER MENU
+    """
     pygame.init()
     pygame.font.init()
     
@@ -63,13 +72,15 @@ def main():
     arrow_up = True #Se va a usar para detectar si presióno o no la flecha para arriba para moverse por el emnu
     captured_event = None
     
-    rect = pygame.Rect(0,310,10,58) #Establezco el objeto rect
+    rect = pygame.Rect(0,300,10,30) #Establezco el objeto rect
     
     font = pygame.font.SysFont('arial',60) #Establezco la fuente de la letra
     space_text = font.render("SPACE", True, [238,226,71], [0,0,0])     #render('Texto',True,[R,G,B colores de la letra],[R G B color fondo de letra])
     invaders_text = font.render("INVADERS", True, [238,226,71], [0,0,0])
-    main_text = font.render("START", True, [238,226,71], [0,0,0])
-    exit_text = font.render("EXIT", True, [238,226,71], [0,0,0])
+    
+    font_2 = pygame.font.SysFont('arial',30)
+    main_text = font_2.render("INICIAR", True, [238,226,71], [0,0,0])
+    exit_text = font_2.render("SALIR", True, [238,226,71], [0,0,0])
 
     background = pygame.image.load('inicio.jpeg')
     screen = pygame.display.set_mode((width,height))
@@ -84,13 +95,11 @@ def main():
                 break
             if captured_event.type == pygame.KEYDOWN:
                 if captured_event.key == pygame.K_UP and not arrow_up:
-                    arrow_up = True
-                    rect = pygame.Rect(0,310,10,58) #Establezco el objeto rect
-                    pygame.draw.rect(screen, [136,136,136],rect) #Dibujo el rect (pantalla,color rgb, objeto_rect)
+                    arrow_up = True   
+                    rect = pygame.Rect(0,300,10,30) #Dibujo el rectangulo apuntando al Iniciar
                 elif captured_event.key == pygame.K_DOWN and arrow_up:
                     arrow_up = False
-                    rect = pygame.Rect(0,370,10,58) #Establezco el objeto rect
-                    pygame.draw.rect(screen, [136,136,136],rect) #Dibujo el rect (pantalla,color rgb, objeto_rect)
+                    rect = pygame.Rect(0,370,10,30) #Dibujo el rectangulo apuntando al Salir
                 if captured_event.key==pygame.K_SPACE:
                     pygame.quit()
                     break
