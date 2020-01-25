@@ -2,6 +2,7 @@ import pygame
 from time import sleep
 from random import randint
 
+
 class Enemy:
     def __init__(self):
         #El enemigo es de 20x20
@@ -46,7 +47,7 @@ class Ball:
         #Recibo xStarshipPosition (posicion de la nave) porque desde el X de la nave disparo la bala
         self.__yPosition = 600 - 100
         self.__xPosition = xStarshipPosition
-        self.__image = pygame.image.load('bala.jpeg')
+        self.__image = pygame.image.load('bala1.png')
 
     def shoot(self,screen):
         """
@@ -59,14 +60,16 @@ class Ball:
         """
             Retorna true si la bala se pasó del límite superior de la pantalla. False si no se pasó
         """
-        return self.__yPosition < 0
+        return self.__yPosition < 0 
 
     def collideX(self,xEnemyPosition):
         """
             Retorna True si la bala colisiona con el enemigo sobre el eje X
         """
-        return xEnemyPosition >= self.__xPosition - 30 and xEnemyPosition <= self.__xPosition
-
+        return (((xEnemyPosition >= self.__xPosition - 30 and xEnemyPosition <= self.__xPosition) or 
+               (xEnemyPosition <= self.__xPosition + 10 and xEnemyPosition - 10 >= self.__xPosition - 10)) 
+                or (xEnemyPosition >= self.__xPosition - 30 and xEnemyPosition - 20 <= self.__xPosition + 10) or (xEnemyPosition - 10 >= self.__xPosition - 10 and xEnemyPosition - 20 <= self.__xPosition + 10))
+    
     def collideY(self,yEnemyPosition):
         """
             Retorna True si la bala colisiona con el enemigo sobre el eje X
@@ -117,7 +120,7 @@ def create_enemy(enemys,i):
     """
         Este módulo crea un enemigo cada vez que i llega a 120
     """
-    if i == 120:
+    if i == 200:
         enemys.append(Enemy())
         i = 0
     else:
@@ -130,13 +133,15 @@ def main():
     """
     pygame.init()
     pygame.font.init()
+    pygame.mixer.init()
+
 
     screen_width = 600
     screen_height = 600
 
     end_game = False
-    enemys_killed = 0
-    captured_event = None
+    enemys_killed = 0 #Contador de enemigos asesinados
+    captured_event = None #Variable donde se guardan los eventos capturados en pantalla
     
     enemys = list() #Lista de enemigos
     used_munitions = list() #Lista de municiones
@@ -144,15 +149,13 @@ def main():
     starship = Starship(screen_width,screen_height)
     screen = pygame.display.set_mode((screen_width,screen_height))
 
-    background_color = (82,86,85)
+    background_color = (82,86,85) #Color de fondo
 
     font_text = pygame.font.SysFont('arial',20)
     score_text = font_text.render('Puntaje', True, [238,226,71], background_color)
     enemys_killed_text = font_text.render(str(enemys_killed), True, [238,226,71], background_color)   
 
-    screen.fill(background_color) #Pinto el fondo
-
-    enemys.append(Enemy()) #Agrego un enemigo
+    enemys.append(Enemy()) #Agrego un enemigo 
 
     i = 0 #Este indice se usa para que, cada vez que llegue a 200, agregue un enemigo a la lista de enemys
 

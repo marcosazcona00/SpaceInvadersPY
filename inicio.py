@@ -65,7 +65,7 @@ def main():
     """
     pygame.init()
     pygame.font.init()
-    
+   
     width = 490 #Ancho pantalla
     height = 490 #Alto pantalla
     arrow_up = True #Se va a usar para detectar si presióno o no la flecha para arriba para moverse por el emnu
